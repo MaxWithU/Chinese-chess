@@ -1,0 +1,248 @@
+playItem (item, index) {
+      if (this.stepCache.length === 0) {
+        if (item.type) {
+          this.getItem(item, index)
+        }
+      } else if (this.stepCache.length > 0) {
+        if (this.stepCache[0].item.type !== item.type) {
+          this.vailItem(item, index)
+        } else {
+          this.matrix[this.stepCache[0].index].active = false
+          this.getItem(item, index)
+        }
+      }
+    },
+    getItem (item, index) {
+      if (item.type === this.player) {
+        item.active = function () {
+          item.active ? true : false
+        }
+        this.stepCache[0] = {
+          index: index,
+          item: item
+        }
+      }
+    },
+    /* 判断象棋 */
+    vailItem (item, index) {
+      switch(this.stepCache[0].item.name) {
+        case '卒':
+        case '兵': this.setBin(item, index)
+          break
+        case '士': this.setShi(item, index)
+          break
+        case '象':
+        case '相': this.setXiang(item, index)
+          break
+        case '帅':
+        case '将': this.setShuai(item, index)
+          break
+        case '马': this.setMa(item, index)
+          break
+        case '车': this.setJv(item, index)
+          break
+        case '炮': this.setPao(item, index)
+      }
+    },
+    setItem (item, index) {
+      let end = false
+      switch (item.name) {
+        case '将': this.end = {
+          show: true,
+          winner: '红方'
+        }
+        end = true
+        break
+        case '帅': this.end = {
+          show: true,
+          winner: '蓝方'
+        }
+        end = true
+      }
+      item.name = this.stepCache[0].item.name
+      item.type = this.stepCache[0].item.type
+      this.matrix[this.stepCache[0].index].name = ''
+      this.matrix[this.stepCache[0].index].type = ''
+      this.matrix[this.stepCache[0].index].active = false
+      this.stepCache = []
+      if (!end) {
+        this.player === 'r'? this.player = 'b': this.player = 'r'
+      }
+    },
+    /* 兵 */
+    setBin (item, index) {
+      if ((Math.abs(item.area.y-this.stepCache[0].item.area.y) + Math.abs(item.area.x-this.stepCache[0].item.area.x)) === 1) {
+        switch (this.stepCache[0].item.type) {
+          case 'r':
+            if (this.stepCache[0].item.area.y < 5 && item.area.y > 3 && item.area.y < 5 && Math.abs(item.area.x-this.stepCache[0].item.area.x) === 0) {
+              this.setItem(item, index)
+            } else if (item.area.y >= 5) {
+              console.log(item.area.y)
+              this.setItem(item, index)
+            }
+            break
+          case 'b':
+            if (
+                this.stepCache[0].item.area.y > 4 && item.area.y > 4 && item.area.y < 6 && Math.abs(item.area.x-this.stepCache[0].item.area.x) === 0) {
+                this.setItem(item, index)
+              } else if (item.area.y <= 4) {
+                console.log(item.area.y)
+                this.setItem(item, index)
+              }
+              break
+        }
+      }
+    },
+    /* 士 */
+    setShi (item, index) {
+      if (Math.abs(item.area.y-this.stepCache[0].item.area.y) === 1 && Math.abs(item.area.x-this.stepCache[0].item.area.x) === 1) {
+        switch(`${item.area.x}_${item.area.y}`) {
+          /* 红方 */
+          case '4_1':
+          case '5_0':
+          case '3_0':
+          case '5_2':
+          case '3_2':
+          /* 黑方 */
+          case '4_8':
+          case '5_9':
+          case '3_9':
+          case '5_7':
+          case '3_7': this.setItem(item, index)
+            break
+        }
+      }
+    },
+    /* 帅 */
+    setShuai (item, index) {
+      if ((Math.abs(item.area.y-this.stepCache[0].item.area.y) + Math.abs(item.area.x-this.stepCache[0].item.area.x)) === 1) {
+        switch(`${item.area.x}_${item.area.y}`) {
+          /* 红方 */
+          case '3_0':
+          case '3_1':
+          case '3_2':
+          case '4_0':
+          case '4_1':
+          case '4_2':
+          case '5_0':
+          case '5_1':
+          case '5_2':
+          /* 黑方 */
+          case '3_7':
+          case '3_8':
+          case '3_9':
+          case '4_7':
+          case '4_8':
+          case '4_9':
+          case '5_7':
+          case '5_8':
+          case '5_9': this.setItem(item, index)
+            break
+        }
+      }
+    },
+    /* 相 */
+    setXiang (item, index) {
+      if (
+        Math.abs(item.area.y-this.stepCache[0].item.area.y)===2 
+        && 
+        Math.abs(item.area.x-this.stepCache[0].item.area.x) === 2
+        &&
+        this.matrix[(item.area.x+this.stepCache[0].item.area.x)/2 
+        + '_' +
+        (item.area.y+this.stepCache[0].item.area.y)/2].type === ''
+        ){
+
+        switch(`${item.area.x}_${item.area.y}`) {
+          /* 红方 */
+          case '2_0':
+          case '6_0':
+          case '0_2':
+          case '4_2':
+          case '8_2':
+          case '6_4':
+          case '2_4':
+          /* 黑方 */
+          case '2_9':
+          case '6_9':
+          case '0_7':
+          case '4_7':
+          case '8_7':
+          case '6_5':
+          case '2_5': this.setItem(item, index)
+            break
+        }
+      }
+    },
+    /* 马 */
+    setMa (item, index) {
+      if (
+        Math.abs(item.area.y-this.stepCache[0].item.area.y) === 2 && Math.abs(item.area.x-this.stepCache[0].item.area.x) === 1
+      ) {
+        if (this.matrix[`${this.stepCache[0].item.area.x}_${(this.stepCache[0].item.area.y + item.area.y)/2}`].name === '') {
+          this.setItem(item, index)
+        }
+      } else if (
+        Math.abs(item.area.y-this.stepCache[0].item.area.y)===1
+        &&
+        Math.abs(item.area.x-this.stepCache[0].item.area.x) === 2
+      ) {
+        if (this.matrix[`${(this.stepCache[0].item.area.x + item.area.x) / 2}_${this.stepCache[0].item.area.y}`].name === '') {
+          this.setItem(item, index)
+        }
+      }
+    },
+    /* 车 */
+    setJv (item, index) {
+      if (item.area.y - this.stepCache[0].item.area.y === 0 ) {
+        let arr = [item.area.x, this.stepCache[0].item.area.x].sort()
+        let stop = false
+        for (let i = arr[0] + 1; i < arr[1]; i++) {
+          if (this.matrix[`${i}_${item.area.y}`].name !== '') {
+            stop = true
+          } 
+        }
+        stop ? '' : this.setItem(item, index)
+      } else if (item.area.x - this.stepCache[0].item.area.x === 0) {
+        let arr = [item.area.y, this.stepCache[0].item.area.y].sort()
+        let stop = false
+        for (let i = arr[0] + 1; i < arr[1]; i++) {
+          console.log(this.matrix[`${item.area.x}_${i}`].name)
+          if (this.matrix[`${item.area.x}_${i}`].name !== '') {
+            stop = true
+          }
+        }
+        stop ? '' : this.setItem(item, index)
+      }
+    },
+    /* 炮 */
+    setPao (item, index) {
+      if (item.area.y - this.stepCache[0].item.area.y === 0) {
+        let arr = [item.area.x, this.stepCache[0].item.area.x].sort()
+        let stop = 0
+        for (let i = arr[0] + 1; i < arr[1]; i++) {
+          if (this.matrix[`${i}_${item.area.y}`].name !== '') {
+            stop++
+          }
+        }
+        if (stop === 0 && item.name === '') {
+          this.setItem(item, index)
+        } else if (stop === 1 && item.name !== '') {
+          this.setItem(item, index)
+        }
+      } else if (item.area.x - this.stepCache[0].item.area.x === 0) {
+        let arr = [item.area.y, this.stepCache[0].item.area.y].sort()
+        let stop = 0
+        for (let i = arr[0] + 1; i < arr[1]; i++) {
+          console.log(this.matrix[`${item.area.x}_${i}`].name)
+          if (this.matrix[`${item.area.x}_${i}`].name !== '') {
+            stop++
+          }
+        }
+        if (stop === 0 && item.name === '') {
+          this.setItem(item, index)
+        } else if (stop === 1 && item.name !== '') {
+          this.setItem(item, index)
+        }
+      }
+    }
