@@ -23,7 +23,7 @@
           }
         )),
         chess: new Map(chess),
-        mtx: [],
+        mtx: []
       }
     },
     computed: {
