@@ -1,15 +1,20 @@
 <template>
- <div>1231</div>
+<div>
+ <div v-for = "(item, index) in mtx" >
+  <span v-for = "(it, i) in item[1]" @click = 'deleteItem(index, i)'>{{it}}</span>  
+</div>
+ </div>
 </template>
 <script>
   export default {
     data () {
       return {
         matrix: new Map(
-          Array(9).fill().map((item, i) => {
-            return [i, Array(9).fill()]
+          Array(9).fill(1).map((item, i) => {
+            return [i, Array(9).fill(1)]
           }
         )),
+        mtx: [],
         stepCache: [],
         player: 'r',
         end: {
@@ -21,13 +26,21 @@
         }
       }
     },
+    computed: {
+    },
     mounted () {
-      console.log(this.matrix)
+      this.mtx = [...this.matrix]
     },
     methods: {
       init () {
-        this.setMatrix()
-        this.start.show = false
+      },
+      renderItem () {
+        this.mtx = [...this.matrix]
+      },
+      deleteItem (index, i) {
+        console.log(this.matrix.get(index))
+        this.matrix.get(index)[i] = 'x'
+        this.renderItem()
       },
       setMatrix () {
       },
