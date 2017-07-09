@@ -1,7 +1,7 @@
 <template>
   <div class ="board">
     <div v-for = "(item, index) in mtx" class ="row">
-      <span class ="col" v-for = "(it, i) in item[1]" @click = 'pick(index, i)'>{{it?chess.get(it).name: '' }}</span>  
+      <span class ="col" v-for = "(it, i) in item[1]" @click = 'pick(it, index, i)'>{{it?chess.get(it).name: '' }}</span>  
     </div>
   </div>
 </template>
@@ -14,6 +14,8 @@
   // 炮:Cannon
   // 卒/兵:Soldier
   import chess from './chess.json'
+  import curryPick from './utils/curryPick.js'
+  import rook from './action/rook'
   export default {
     data () {
       return {
@@ -23,7 +25,9 @@
           }
         )),
         chess: new Map(chess),
-        mtx: []
+        mtx: [],
+        choose: 'A',
+        chooseItem: []
       }
     },
     computed: {
@@ -35,15 +39,56 @@
       this.renderIt()
     },
     methods: {
-      init () {
-      },
       renderIt () {
         this.mtx = [...this.matrix]
       },
-      pick (index, i) {
-        this.matrix.get(index)[i] = 'x'
-        this.renderIt()
-      }
+      pick (it, y, x) {
+        console.log(it)
+        console.log(this.chooseItem.length)
+        switch (this.chooseItem.length) {
+          case 0:
+            console.log(0)
+            if (it) {
+              this.chess.get(it).camp === this.choose ? this.chooseItem.push(it) : ''
+            }
+            break
+          case 1:
+            console.log(1)
+            if (it) {
+              if (it === this.chooseItem[0]) {
+                this.chooseItem = []
+              } else if (this.chess.get(it).camp === this.chooseItem[0]) {
+                this.chooseItem[0] = it
+              } else {
+                this.setItem(
+                  this.matrix,
+                  this.chess.get(this.chooseItem[0]),
+                  {x: x, y: y}
+                )
+              }
+            } else {
+              this.setItem(
+                this.matrix,
+                this.chess.get(this.chooseItem[0]),
+                {x: x, y: y}
+              )
+            }
+            break
+        }
+      },
+      setItem (...args) {
+        console.log('setItem')
+        console.log(args[1].type)
+        switch (args[1].type) {
+          case 'R': rook(...args)
+            break
+          default: console.log('other')
+            break
+        }
+      },
+      pck: curryPick((...arg) => {
+        return [...arg]
+      })
     }
   }
 </script>

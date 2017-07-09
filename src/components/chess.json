@@ -93,6 +93,6 @@
     "x": 8, "y": 6 , "type" : "A", "name": "兵", "camp": "B"
   }],
   ["G_B_1", {
-    "x": 4, "y": 6 , "type" : "A", "name": "帅", "camp": "B"
+    "x": 4, "y": 9 , "type" : "A", "name": "将", "camp": "B"
   }]
 ]
