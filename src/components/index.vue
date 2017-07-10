@@ -77,10 +77,11 @@
         }
       },
       setItem (...args) {
+        console.log(args)
         console.log('setItem')
         console.log(args[1].type)
         switch (args[1].type) {
-          case 'R': rook(...args)
+          case 'R': console.log(rook(...args))
             break
           default: console.log('other')
             break

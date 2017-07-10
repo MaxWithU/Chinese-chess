@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>中国象棋</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1100,user-scalable=no">
+  <style type="text/css">
+    body, html {
+      min-height: 1000px;
+      max-width: 1000px;
+    }
+    #app {
+      width: 1000px;
+      height: 900px;
+      overflow: hidden;
+      background: #58a;
+      background-image: 
+        linear-gradient(
+          transparent, 
+          transparent 49px,
+          #fff 49px,
+          #fff 51px,
+          transparent 51px
+        ), linear-gradient(90deg,
+          transparent, 
+          transparent 49px,
+          #fff 49px,
+          #fff 51px,
+          transparent 51px
+        );
+      box-shadow: 0 0 0px 50px  #f7f7f7 inset;
+      background-size: 100px 100px, 100px 100px;
+      position: relative;
+    }
+    .tip{
+    	position: absolute;
+    	bottom: 0px;
+    	text-align: center;
+    	background: #fff;
+    	border-radius: 5px;
+    	line-height: 30px;
+    	box-shadow: 0px 1px 5px #cbcbcb inset;
+    	width: 100px;
+    	left: 50%;
+    	height: 30px;
+    	margin-left: -50px;
+    	z-index: 999;
+    }
+    #app:after{
+      color:#fff;
+      font-weight: bold;
+      font-size: 60px;
+      position: absolute;
+      left: 450px;
+      top: 51px;
+      width: 100px;
+      content: '楚河汉界';
+      line-height:200px;
+      text-align: center;background: #58a;
+      height: 798px;
+    }
+    .chess {
+      width: 80px;
+      float: left;
+      height: 80px;
+      line-height: 76px;
+      margin: 10px;
+    }
+
+    .chess[active='true']{
+      margin:5px 15px 15px 5px;
+      box-shadow: 10px 10px 20px #666;
+    }
+    .chess[data='r']{
+      position: relative;
+      z-index: 999;
+      width: 76px;
+      height: 76px;
+      overflow: hidden;
+      transition: box-shadow .2s;
+      font-weight: bold;
+      font-size: 30px;
+      box-shadow: 3px 3px 10px #666;
+      text-align: center;
+      background: #fff;
+      border-radius: 50%;
+      color:red;
+      border: 2px solid red;
+    }
+    .chess[data='b']{
+      position: relative;
+      z-index: 999;
+      width: 76px;
+      height: 76px;
+      overflow: hidden;
+      transition: box-shadow .2s;
+      font-weight: bold;
+      font-size: 30px;
+      box-shadow: 3px 3px 10px #666;
+      text-align: center;
+      background: #fff;
+      border-radius: 50%;
+      color:blue;
+      border: 2px solid blue; 
+    }
+    .board {
+      position: absolute;
+      background: #f7f7f7;
+      width: 1000px;
+      height: 900px;
+      top:0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;padding: 40px;border-radius:30px;
+      box-shadow: 1px 1px 8px #cbcbcb;
+    }
+    .start{
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      background: #f7f7f7;
+      font-size: 100px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 300px;
+      color: #fff;
+      text-shadow:0 1px 2px #cbcbcb;
+    }
+    .end{
+    	position: relative;
+    	width: 100%;
+      height: 100%;
+      z-index: 9999;
+      background: rgba(0,0,0,0.5);
+      font-size: 20px;
+      color: #666;
+      line-height: 100px;
+      text-align: center;
+
+    }
+    .alert{
+    	width: 300px;
+    	height: 200px;
+    	background: #fff;
+    	position: absolute;
+    	border-radius: 10px;
+    	left: 50%;
+    	top: 50%;
+    	margin-top: -100px;
+    	margin-left: -150px;
+    }
+    .alert>div{
+    	position: relative;
+    	width: 100%;
+    	height: 100%;
+    }
+    .button {
+      width: 200px;
+      height: 40px;
+      font-size: 20px;
+      font-weight: normal;
+      line-height: 40px;
+      border-radius: 5px;
+      background: #ff461f;
+      text-align: center;
+      color:#fff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -100px;
+    }
+    .button.active {
+      background: #177cb0;
+    }
+  </style>
+  <script src="./vue.js"></script>
+</head>
+<body>
+  <div class="board">
+    <div id="app">
+    	<div class="tip">{{player === "r"?"红方": "蓝方" }}</div>
+      <div 
+        v-for='(value, key) in matrix'
+        class='chess'
+        :data.sync='value.type'
+        :active ='value.active?"true":"false"'
+        :class='value.type'
+        @click='playItem(value, key)'
+        >{{value.name}}
+      </div>
+      <div class="start" v-show = 'start.show'>
+        中国象棋
+        <div class="button" @click ='init()' >游戏开始</div>
+      </div>
+      <div class="end"  v-show = 'end.show'>
+	      <div class="alert">
+		      <div>
+		      	{{'游戏结束,胜利者是' + end.winner}}
+		      	<div class="button" @click ='init()' >重新开始</div>
+	      	</div>
+      	</div>
+      </div>
+    </div>
+  </div>
+  <script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      matrix: {},
+      stepCache: [],
+      player: 'r',
+      end: {
+      	show: false,
+      	winner: ''
+      },
+      start: {
+        show: true,
+      }
+    },
+    methods: {
+      init () {
+        console.log('init')
+        this.setMatrix()
+        this.start.show = false
+      },
+      setMatrix () {
+        let matrix = {}
+        for (let x = 0; x < 9; x++) {
+          for (var y = 0; y < 10; y++) {
+            let item = this.setOrigin(`${x}_${y}`)
+            item.active = false
+            item.area = {
+              x:x,
+              y:y
+            }
+            matrix[`${x}_${y}`] = item
+          }
+        }
+        this.matrix = matrix
+      },
+      setOrigin (val) {
+        switch (val) {
+          case '0_0':
+          case '8_0': return {name: '车', type: 'r'}
+          case '1_0':
+          case '7_0': return {name: '马', type: 'r'}
+          case '2_0':
+          case '6_0': return {name: '相', type: 'r'}
+          case '3_0':
+          case '5_0': return {name: '士', type: 'r'}
+          case '4_0': return {name: '帅', type: 'r'}
+          case '7_2':
+          case '1_2': return {name: '炮', type: 'r'}
+          case '0_3':
+          case '2_3':
+          case '4_3':
+          case '6_3':
+          case '8_3': return {name: '兵', type: 'r'}
+          case '0_9':
+          case '8_9': return {name: '车', type: 'b'}
+          case '1_9':
+          case '7_9': return {name: '马', type: 'b'}
+          case '2_9':
+          case '6_9': return {name: '象', type: 'b'}
+          case '4_9': return {name: '将', type: 'b'}
+          case '3_9':
+          case '5_9': return {name: '士', type: 'b'}
+          case '1_7':
+          case '7_7': return {name: '炮', type: 'b'}
+          case '0_6':
+          case '2_6':
+          case '4_6':
+          case '6_6':
+          case '8_6': return {name: '卒', type: 'b'}
+          default: return {name: '', type: ''}
+        }
+      },
+      playItem (item, index) {
+        if (this.stepCache.length === 0) {
+          if (item.type) {
+            this.getItem(item, index)
+          }
+        } else if (this.stepCache.length > 0) {
+          if (this.stepCache[0].item.type !== item.type) {
+            this.vailItem(item, index)
+          } else {
+            this.matrix[this.stepCache[0].index].active = false
+            this.getItem(item, index)
+          }
+        }
+      },
+      getItem (item, index) {
+        if (item.type === this.player) {
+          item.active = function () {
+            item.active ? true : false
+          }
+          this.stepCache[0] = {
+            index: index,
+            item: item
+          }
+        }
+      },
+      /* 判断象棋 */
+      vailItem (item, index) {
+        switch(this.stepCache[0].item.name) {
+          case '卒':
+          case '兵': this.setBin(item, index)
+            break
+          case '士': this.setShi(item, index)
+            break
+          case '象': 
+          case '相': this.setXiang(item, index)
+            break
+          case '帅':
+          case '将': this.setShuai(item, index)
+            break
+          case '马': this.setMa(item, index)
+            break
+          case '车': this.setJv(item, index)
+            break
+          case '炮': this.setPao(item, index)
+        }
+      },
+      setItem (item, index) {
+      	let end = false
+      	switch(item.name) {
+        	case '将': this.end = {
+        		show: true,
+        		winner: '红方'
+        	}
+        	end = true
+        	break
+        	case '帅': this.end = {
+        		show: true,
+        		winner: '蓝方'
+        	}
+        	end = true
+        }
+        item.name = this.stepCache[0].item.name
+        item.type = this.stepCache[0].item.type
+        this.matrix[this.stepCache[0].index].name = ''
+        this.matrix[this.stepCache[0].index].type = ''
+        this.matrix[this.stepCache[0].index].active = false
+        this.stepCache = []
+        if(!end){
+        	this.player === 'r'? this.player = 'b': this.player = 'r'
+        }
+      },
+      /* 兵 */
+      setBin (item, index) {
+        if((Math.abs(item.area.y-this.stepCache[0].item.area.y) + Math.abs(item.area.x-this.stepCache[0].item.area.x)) === 1) {
+          switch (this.stepCache[0].item.type) {
+            case 'r':
+              if (
+                this.stepCache[0].item.area.y < 5 
+                && 
+                item.area.y>3 
+                && 
+                item.area.y < 5 
+                &&
+                Math.abs(item.area.x-this.stepCache[0].item.area.x) === 0) {
+                this.setItem(item, index)
+              } else if (item.area.y >= 5) {
+                console.log(item.area.y)
+                this.setItem(item, index)
+              }
+              break
+            case 'b': 
+              if (
+                  this.stepCache[0].item.area.y > 4
+                  && 
+                  item.area.y > 4
+                  && 
+                  item.area.y < 6 
+                  &&
+                  Math.abs(item.area.x-this.stepCache[0].item.area.x) === 0) {
+                  this.setItem(item, index)
+                } else if (item.area.y <= 4) {
+                  console.log(item.area.y)
+                  this.setItem(item, index)
+                }
+                break
+          }
+        }
+      },
+      /* 士 */
+      setShi (item, index) {
+        if(
+            (
+              Math.abs(item.area.y-this.stepCache[0].item.area.y)===1
+              &&
+              Math.abs(item.area.x-this.stepCache[0].item.area.x)=== 1
+            )
+          ) {
+          switch(`${item.area.x}_${item.area.y}`) {
+            /* 红方 */
+            case '4_1':
+            case '5_0':
+            case '3_0':
+            case '5_2':
+            case '3_2':
+            /* 黑方 */
+            case '4_8':
+            case '5_9':
+            case '3_9':
+            case '5_7':
+            case '3_7': this.setItem(item, index)
+              break
+          }
+        }
+      },
+      /* 帅 */
+      setShuai (item, index) {
+        if((Math.abs(item.area.y-this.stepCache[0].item.area.y) + Math.abs(item.area.x-this.stepCache[0].item.area.x)) === 1) {
+          switch(`${item.area.x}_${item.area.y}`) {
+            /* 红方 */
+            case '3_0':
+            case '3_1':
+            case '3_2':
+            case '4_0':
+            case '4_1':
+            case '4_2':
+            case '5_0':
+            case '5_1':
+            case '5_2':
+            /* 黑方 */
+            case '3_7':
+            case '3_8':
+            case '3_9':
+            case '4_7':
+            case '4_8':
+            case '4_9':
+            case '5_7':
+            case '5_8':
+            case '5_9': this.setItem(item, index)
+              break
+          }
+        }
+      },
+      /* 相 */
+      setXiang (item, index) {
+        if(
+          Math.abs(item.area.y-this.stepCache[0].item.area.y)===2 
+          && 
+          Math.abs(item.area.x-this.stepCache[0].item.area.x) === 2
+          &&
+          this.matrix[(item.area.x+this.stepCache[0].item.area.x)/2 
+          + '_' +
+          (item.area.y+this.stepCache[0].item.area.y)/2].type === ''
+          ){
+
+          switch(`${item.area.x}_${item.area.y}`) {
+            /* 红方 */
+            case '2_0':
+            case '6_0':
+            case '0_2':
+            case '4_2':
+            case '8_2':
+            case '6_4':
+            case '2_4':
+            /* 黑方 */
+            case '2_9':
+            case '6_9':
+            case '0_7':
+            case '4_7':
+            case '8_7':
+            case '6_5':
+            case '2_5': this.setItem(item, index)
+              break
+          }
+        }
+      },
+      /* 马 */
+      setMa (item, index) {
+        if (
+          Math.abs(item.area.y-this.stepCache[0].item.area.y)===2
+          &&
+          Math.abs(item.area.x-this.stepCache[0].item.area.x) === 1
+        ) {
+          if(this.matrix[`${this.stepCache[0].item.area.x}_${(this.stepCache[0].item.area.y + item.area.y)/2}`].name === '') {
+            this.setItem(item, index)
+          }
+        } else if (
+          Math.abs(item.area.y-this.stepCache[0].item.area.y)===1
+          &&
+          Math.abs(item.area.x-this.stepCache[0].item.area.x) === 2
+        ) {
+          if(this.matrix[`${(this.stepCache[0].item.area.x + item.area.x)/2}_${this.stepCache[0].item.area.y}`].name === '') {
+            this.setItem(item, index)
+          }
+        }
+      },
+      /* 车 */
+      setJv (item, index) {
+        if (item.area.y - this.stepCache[0].item.area.y === 0 ) {
+          let arr = [item.area.x, this.stepCache[0].item.area.x].sort()
+          let stop = false
+          for (var i = arr[0] +1 ; i < arr[1]; i++) {
+            if (this.matrix[`${i}_${item.area.y}`].name !== '') {
+              stop = true
+            } 
+          }
+          stop?'':this.setItem(item, index)
+        } else if (item.area.x - this.stepCache[0].item.area.x === 0) {
+          let arr = [item.area.y, this.stepCache[0].item.area.y].sort()
+          let stop = false
+          for (var i = arr[0] + 1; i < arr[1]; i++) {
+            console.log(this.matrix[`${item.area.x}_${i}`].name)
+            if (this.matrix[`${item.area.x}_${i}`].name !== '') {
+              stop = true
+            } 
+          }
+          stop?'':this.setItem(item, index)
+        }
+      },
+      /* 炮 */
+      setPao (item, index) {
+        if (item.area.y - this.stepCache[0].item.area.y === 0 ) {
+          let arr = [item.area.x, this.stepCache[0].item.area.x].sort()
+          let stop = 0
+          for (var i = arr[0] +1 ; i < arr[1]; i++) {
+            if (this.matrix[`${i}_${item.area.y}`].name !== '') {
+              stop++
+            }
+          }
+          if (stop === 0 && item.name === '') {
+            this.setItem(item, index)
+          } else if(stop === 1 && item.name !== '') {
+            this.setItem(item, index)
+          }
+        } else if (item.area.x - this.stepCache[0].item.area.x === 0) {
+          let arr = [item.area.y, this.stepCache[0].item.area.y].sort()
+          let stop = 0
+          for (var i = arr[0] + 1; i < arr[1]; i++) {
+            console.log(this.matrix[`${item.area.x}_${i}`].name)
+            if (this.matrix[`${item.area.x}_${i}`].name !== '') {
+              stop++
+            } 
+          }
+          if (stop === 0 && item.name === '') {
+            this.setItem(item, index)
+          } else if(stop === 1 && item.name !== '') {
+            this.setItem(item, index)
+          }
+        }
+      }
+    }
+  })
+  </script>
+</body>
+</html>
