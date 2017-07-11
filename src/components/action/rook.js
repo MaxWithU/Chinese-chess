@@ -4,8 +4,8 @@ export default function (matrix, start, end) {
   }
   if (start.x - end.x === 0 || start.y - end.y === 0) {
     return start.x === end.x
-    ? !range(start.y, end.y).some((i) => matrix.get(i)[start.x])
-    : !range(start.x, end.x).some((i) => matrix.get(start.y)[i])
+    ? !range(start.y, end.y).some((i) => matrix[i][start.x])
+    : !range(start.x, end.x).some((i) => matrix[start.y][i])
   } else {
     return false
   }

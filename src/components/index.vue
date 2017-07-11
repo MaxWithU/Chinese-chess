@@ -1,7 +1,7 @@
 <template>
   <div class ="board">
     <div v-for = "(item, index) in mtx" class ="row">
-      <span class ="col" v-for = "(it, i) in item[1]" @click = 'pick(it, index, i)'>{{it?chess.get(it).name: '' }}</span>  
+      <span class ="col" v-for = "(it, i) in item" @click = 'pick(it, index, i)'>{{it?chess.get(it).name: '' }}</span>  
     </div>
   </div>
 </template>
@@ -19,11 +19,7 @@
   export default {
     data () {
       return {
-        matrix: new Map(
-          Array(10).fill().map((item, i) => {
-            return [i, Array(9).fill(null)]
-          }
-        )),
+        matrix: Array(10).fill().map((item, i) => Array(9).fill(null)),
         chess: new Map(chess),
         mtx: [],
         choose: 'A',
@@ -33,18 +29,16 @@
     computed: {
     },
     mounted () {
-      for (let item of this.chess.entries()) {
-        this.matrix.get(item[1].y)[item[1].x] = item[0]
-      }
       this.renderIt()
     },
     methods: {
       renderIt () {
-        this.mtx = [...this.matrix]
+        this.mtx = this.matrix.map(item => item)
+        for (let item of this.chess) {
+          this.mtx[item[1].y][item[1].x] = item[0]
+        }
       },
       pick (it, y, x) {
-        console.log(it)
-        console.log(this.chooseItem.length)
         switch (this.chooseItem.length) {
           case 0:
             console.log(0)
@@ -54,21 +48,25 @@
             break
           case 1:
             console.log(1)
+            // console.log(this.chess.get(it).camp)
             if (it) {
               if (it === this.chooseItem[0]) {
+                console.log('chooseSelf')
                 this.chooseItem = []
-              } else if (this.chess.get(it).camp === this.chooseItem[0]) {
+              } else if (this.chess.get(it).camp === this.choose) {
+                console.log('chooseFriend')
                 this.chooseItem[0] = it
               } else {
+                console.log('chooseOther')
                 this.setItem(
-                  this.matrix,
+                  this.mtx,
                   this.chess.get(this.chooseItem[0]),
                   {x: x, y: y}
                 )
               }
             } else {
               this.setItem(
-                this.matrix,
+                this.mtx,
                 this.chess.get(this.chooseItem[0]),
                 {x: x, y: y}
               )
@@ -77,15 +75,23 @@
         }
       },
       setItem (...args) {
-        console.log(args)
         console.log('setItem')
-        console.log(args[1].type)
         switch (args[1].type) {
-          case 'R': console.log(rook(...args))
+          case 'R': rook(...args) && this.jump(...args)
             break
           default: console.log('other')
             break
         }
+      },
+      jump (...args) {
+        console.log('jump')
+        this.chess.get(this.mtx[args[1].y][args[1].x]).x = args[2].x
+        this.chess.get(this.mtx[args[1].y][args[1].x]).y = args[2].y
+        if (this.mtx[args[2].y][args[2].x]) {
+          this.chess.get(this.mtx[args[2].y][args[2].x]).x = null
+          this.chess.get(this.mtx[args[2].y][args[2].x]).y = null
+        }
+        this.renderIt()
       },
       pck: curryPick((...arg) => {
         return [...arg]
