@@ -1,7 +1,7 @@
 <template>
   <div class ="board">
     <div v-for = "(item, index) in mtx" class ="row">
-      <span class ="col" v-for = "(it, i) in item" @click = 'pick(it, index, i)'>{{it?chess.get(it).name: '' }}</span>  
+      <span class ="col" :class ="chooseItem[0] === it ? 'active': ''" v-for = "(it, i) in item" @click = 'pick(it, index, i)'>{{it?chess.get(it).name: '' }}</span>  
     </div>
   </div>
 </template>
@@ -19,23 +19,20 @@
   export default {
     data () {
       return {
-        matrix: Array(10).fill().map((item, i) => Array(9).fill(null)),
         chess: new Map(chess),
         mtx: [],
         choose: 'A',
         chooseItem: []
       }
     },
-    computed: {
-    },
     mounted () {
       this.renderIt()
     },
     methods: {
       renderIt () {
-        this.mtx = this.matrix.map(item => item)
-        for (let item of this.chess) {
-          this.mtx[item[1].y][item[1].x] = item[0]
+        this.mtx = Array(10).fill().map((item, i) => Array(9).fill(null))
+        for (let [key, value] of this.chess) {
+          this.mtx[value.y][value.x] = key
         }
       },
       pick (it, y, x) {
@@ -76,15 +73,17 @@
       },
       setItem (...args) {
         console.log('setItem')
+        this.setChess(...args) && this.jump(...args)
+      },
+      setChess (...args) {
         switch (args[1].type) {
-          case 'R': rook(...args) && this.jump(...args)
-            break
-          default: console.log('other')
-            break
+          case 'R': return rook(...args)
+          default: return false
         }
       },
       jump (...args) {
-        console.log('jump')
+        this.choose === 'A' ? this.choose = 'B' : this.choose = 'A'
+        this.chooseItem = []
         this.chess.get(this.mtx[args[1].y][args[1].x]).x = args[2].x
         this.chess.get(this.mtx[args[1].y][args[1].x]).y = args[2].y
         if (this.mtx[args[2].y][args[2].x]) {
@@ -118,4 +117,7 @@
       display:inline-block;
       outline: 1px solid #cbcbcb;
     }
+  .col.active{
+    background:#cbcbcb;
+  }
 </style>
