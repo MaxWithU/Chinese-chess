@@ -56,14 +56,12 @@
               } else {
                 console.log('chooseOther')
                 this.setItem(
-                  this.mtx,
                   this.chess.get(this.chooseItem[0]),
                   {x: x, y: y}
                 )
               }
             } else {
               this.setItem(
-                this.mtx,
                 this.chess.get(this.chooseItem[0]),
                 {x: x, y: y}
               )
@@ -71,24 +69,24 @@
             break
         }
       },
-      setItem (...args) {
+      setItem (one, two) {
         console.log('setItem')
-        this.setChess(...args) && this.jump(...args)
+        this.setChess(one, two) && this.jump(one, two)
       },
-      setChess (...args) {
-        switch (args[1].type) {
-          case 'R': return rook(...args)
+      setChess (one, two) {
+        switch (one.type) {
+          case 'R': return rook(this.mtx, one).has(`${two.x}_${two.y}`)
           default: return false
         }
       },
-      jump (...args) {
+      jump (one, two) {
         this.choose === 'A' ? this.choose = 'B' : this.choose = 'A'
         this.chooseItem = []
-        this.chess.get(this.mtx[args[1].y][args[1].x]).x = args[2].x
-        this.chess.get(this.mtx[args[1].y][args[1].x]).y = args[2].y
-        if (this.mtx[args[2].y][args[2].x]) {
-          this.chess.get(this.mtx[args[2].y][args[2].x]).x = null
-          this.chess.get(this.mtx[args[2].y][args[2].x]).y = null
+        this.chess.get(this.mtx[one.y][one.x]).x = two.x
+        this.chess.get(this.mtx[one.y][one.x]).y = two.y
+        if (this.mtx[two.y][two.x]) {
+          this.chess.get(this.mtx[two.y][two.x]).x = null
+          this.chess.get(this.mtx[two.y][two.x]).y = null
         }
         this.renderIt()
       },
