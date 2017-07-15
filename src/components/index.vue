@@ -15,7 +15,13 @@
   // 卒/兵:Soldier
   import chess from './chess.json'
   import curryPick from './utils/curryPick.js'
-  import rook from './action/rook'
+  import Rook from './action/Rook'
+  import Cannon from './action/Cannon'
+  import Elephant from './action/Elephant'
+  import Horse from './action/Horse'
+  import Soldier from './action/Soldier'
+  import General from './action/General'
+  import Mandarin from './action/Mandarin'
   export default {
     data () {
       return {
@@ -75,11 +81,18 @@
       },
       setChess (one, two) {
         switch (one.type) {
-          case 'R': return rook(this.mtx, one).has(`${two.x}_${two.y}`)
+          case 'R': return Rook(this.mtx, one).has(`${two.x}_${two.y}`)
+          case 'H': return Horse(this.mtx, one).has(`${two.x}_${two.y}`)
+          case 'E': return Elephant(this.mtx, one).has(`${two.x}_${two.y}`)
+          case 'M': return Mandarin(this.mtx, one).has(`${two.x}_${two.y}`)
+          case 'G': return General(this.mtx, one).has(`${two.x}_${two.y}`)
+          case 'S': return Soldier(this.mtx, one).has(`${two.x}_${two.y}`)
+          case 'C': return Cannon(this.mtx, one).has(`${two.x}_${two.y}`)
           default: return false
         }
       },
       jump (one, two) {
+        console.log('jump')
         this.choose === 'A' ? this.choose = 'B' : this.choose = 'A'
         this.chooseItem = []
         this.chess.get(this.mtx[one.y][one.x]).x = two.x

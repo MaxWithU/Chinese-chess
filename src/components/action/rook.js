@@ -26,5 +26,6 @@ export default function (mtx, item) {
     ...range(y[0], y[1]).map((it) => `${item.x}_${it}`)
   ])
   result.delete(`${item.x}_${item.y}`)
+  console.log(result)
   return result
 }
