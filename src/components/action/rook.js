@@ -1,3 +1,4 @@
+import range from '../utils/range'
 export default function (mtx, item) {
   function rdx (a, b) {
     return a.reduce((x, y, i) => {
@@ -13,9 +14,6 @@ export default function (mtx, item) {
         return x
       }
     }, [0, a.length - 1])
-  }
-  function range (start, end) {
-    return Array(Math.abs(end - start) + 1).fill().map((v, i) => Math.min(start++, end++))
   }
   // x轴
   let x = rdx(mtx[item.y], item.x)
