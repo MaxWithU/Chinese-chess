@@ -13,10 +13,17 @@ import Soldier from '../action/Soldier'
 import General from '../action/General'
 import Mandarin from '../action/Mandarin'
 export default class {
-  constructor (mtx, one, two) {
-    this.getRule(one)(mtx, one).has(`${two.x}_${two.y}`)
+  constructor (mtx) {
+    this.matrix = mtx
   }
-  getRule (one) {
+  from (one) {
+    this.rule = this._getRule(one)(this.matrix, one)
+    return this
+  }
+  to (two) {
+    return !!this.rule.has(`${two.x}_${two.y}`)
+  }
+  _getRule (one) {
     switch (one.type) {
       case 'R': return Rook
       case 'H': return Horse
@@ -25,6 +32,7 @@ export default class {
       case 'G': return General
       case 'S': return Soldier
       case 'C': return Cannon
+      default: return new Set()
     }
   }
 }
