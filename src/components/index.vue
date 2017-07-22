@@ -105,20 +105,75 @@
   }
 </script>
 <style>
-  .board{
-    width: 900px;
-    margin:0 auto;
+  html{
+    height:1200px;
+    background:#f1f1f1;
   }
+  .board{
+    font-family:KaiTi;
+    width: 900px;
+    position:relative;
+    box-shadow:
+    0px 0px 0px 40px #FDF5E6 inset,
+    0px 0px 0px 45px #fff inset,
+    0px 0px 0px 48px #FDF5E6 inset,
+    0px 0px 0px 50px #fff inset,
+    0px 0px 0px 50px #FDF5E6 inset,
+    0px 0px 0px 20px #FDF5E6,
+    0px 3px 3px 20px #C59F75,
+    0px 5px 0px 20px #DEB887,
+    0px 5px 10px 22px #cbcbcb
+    ;
+    margin:0 auto;
+    border-radius:5px;
+      overflow: hidden;
+      background: #FDF5E6;
+      background-image: 
+        linear-gradient(
+          transparent, 
+          transparent 49px,
+          #fff 49px,
+          #fff 51px,
+          transparent 51px
+        ), linear-gradient(90deg,
+          transparent, 
+          transparent 49px,
+          #fff 49px,
+          #fff 51px,
+          transparent 51px
+        );
+      background-size: 100px 100px, 100px 100px;
+  }
+  .board:after{
+      color:#fff;
+      font-weight: bold;
+      font-size: 60px;
+      position: absolute;
+      left: 400px;
+      top: 102px;
+      font-weight:bold;
+      width: 98px;
+      content: '楚河漢界';
+      line-height:200px;
+      text-align: center;
+      background: #FDF5E6;
+      z-index:0;
+      height:795px;
+      transform: rotate(-90deg)
+    }
   .row{
+    position:relative;
+    z-index:1;
     width:900px;
     height:100px;
     font-size:0;
   }
   .col{
+      transition:all .2s;
       width:100px;
       font-size:40px;
-      font-family:SongTi;
-      text-shadow:0px -1px 1px #666;
+      font-family:KaiTi;
+      text-shadow:0px -1px 0px #666;
       overflow:hidden;
       height:100px;
       line-height:100px;
@@ -135,11 +190,25 @@
       0 -3px 1px #C59F75 inset,
       0px -5px 5px #DEB887 inset,
       0 -3px 0 6px #FDF5E6 inset,
+      0 -2px 0px 6px #FFDAB9 inset,
       0 -3px 0 10px #FDF1d1 inset,
+      0 -4px 0px 10px #FFDAB9 inset,
       0px 1px 5px #666,
-      0px 3px 10px #cbcbcb;
+      0px 3px 6px #cbcbcb,
+      0px 6px 5px #f1f1f1;
     color:#FF4500;
     
+  }
+  .col.red.active{
+    box-shadow: 
+      0 -3px 1px #C59F75 inset,
+      0px -5px 5px #DEB887 inset,
+      0 -3px 0 6px #FDF5E6 inset,
+      0 -2px 2px 6px #FFDAB9 inset,
+      0 -3px 0 10px #FDF1d1 inset,
+      0 -4px 2px 10px #FFDAB9 inset,
+      0px 5px 10px #777,
+      0px 10px 20px #cbcbcb;
   }
   .col.red:after {
     content: '';
@@ -155,16 +224,25 @@
       0 -3px 1px #C59F75 inset,
       0px -5px 5px #DEB887 inset,
       0 -3px 0 6px #FDF5E6 inset,
+      0 -2px 1px 6px #FFDAB9 inset,
       0 -3px 0 10px #FDF1d1 inset,
+      0 -4px 1px 10px #FFDAB9 inset,
       0px 1px 5px #666,
-      0px 3px 10px #cbcbcb;
+      0px 3px 6px #cbcbcb,
+      0px 6px 5px #f1f1f1;
     color:#1E90FF;
+  }
+  .col.blue.active{
+    box-shadow: 
+      0 -3px 1px #C59F75 inset,
+      0px -5px 5px #DEB887 inset,
+      0 -3px 0 6px #FDF5E6 inset,
+      0 -3px 0 10px #FDF1d1 inset,
+      0px 10px 5px #666,
+      0px 10px 10px #cbcbcb;
   }
   .col.blue:after {
     content: '';
     color: blue;
-  }
-  .col.active{
-    background:#cbcbcb;
   }
 </style>
