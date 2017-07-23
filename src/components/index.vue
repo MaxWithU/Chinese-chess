@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class ="board">
     <div 
       v-for = "(item, index) in mtx" 
@@ -16,26 +17,47 @@
       </span>  
     </div>
   </div>
+  <dashboard 
+    :camp = "choose"
+    @on-reset = "reset"
+    @on-undo = "undo"
+    ></dashboard>
+</div>
 </template>
 <script>
+  import dashboard from './__child/dashboard'
   import curryPick from './utils/curryPick'
-  import chess from './chess.json'
+  import Chess from './chess.json'
   import Rule from './class/Rule'
   // import Check from './class/Check'
   export default {
+    components: {
+      dashboard
+    },
     data () {
       return {
-        chess: new Map(chess),
+        chess: {},
         mtx: [],
         choose: 'A',
         chooseItem: null
       }
     },
     mounted () {
-      this.renderIt()
+      this.reset()
     },
     methods: {
+      undo () {
+        console.log('undo')
+      },
+      reset () {
+        console.log('reset')
+        this.choose = 'A'
+        this.chooseItem = null
+        this.chess = new Map(Chess.map((item) => item))
+        this.renderIt()
+      },
       renderIt () {
+        console.log(this.chess)
         this.mtx = Array(10).fill().map((item, i) => Array(9).fill(null))
         for (let [key, value] of this.chess) {
           if (value.x !== null) {
@@ -104,10 +126,10 @@
     }
   }
 </script>
-<style>
+<style lang = "less">
   html{
     height:1200px;
-    background:#f1f1f1;
+    background-image:url(../assets/bg.png);
   }
   .board{
     font-family:KaiTi;
@@ -120,10 +142,10 @@
     0px 0px 0px 50px #fff inset,
     0px 0px 0px 50px #FDF5E6 inset,
     0px 0px 0px 20px #FDF5E6,
-    0px 3px 3px 20px #C59F75,
-    0px 5px 0px 20px #DEB887,
-    0px 5px 10px 22px #cbcbcb
-    ;
+    0px 1px 0px 20px #fff,
+    0px 6px 3px 17px darken(#FDF5E6, 20%),
+    0px 6px 0px 20px darken(#FDF5E6, 10%),
+    0px 5px 3px 22px #cbcbcb;
     margin:0 auto;
     border-radius:5px;
       overflow: hidden;
