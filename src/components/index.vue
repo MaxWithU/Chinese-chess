@@ -1,5 +1,10 @@
 <template>
 <div>
+  <dashboard 
+    :camp = "choose"
+    @on-reset = "reset"
+    @on-undo = "undo"
+    ></dashboard>
   <div class ="board">
     <div 
       v-for = "(item, index) in mtx" 
@@ -17,17 +22,12 @@
       </span>  
     </div>
   </div>
-  <dashboard 
-    :camp = "choose"
-    @on-reset = "reset"
-    @on-undo = "undo"
-    ></dashboard>
 </div>
 </template>
 <script>
   import dashboard from './__child/dashboard'
   import curryPick from './utils/curryPick'
-  import Chess from './chess.json'
+  import Chess from './class/Chess'
   import Rule from './class/Rule'
   // import Check from './class/Check'
   export default {
@@ -53,7 +53,7 @@
         console.log('reset')
         this.choose = 'A'
         this.chooseItem = null
-        this.chess = new Map(Chess.map((item) => item))
+        this.chess = new Map(new Chess().map((item) => item))
         this.renderIt()
       },
       renderIt () {
