@@ -5,26 +5,34 @@
     @on-reset = "reset"
     @on-undo = "undo"
     ></dashboard>
-  <div class ="board">
+  <chess-main>
     <div 
       v-for = "(item, index) in mtx" 
-      class ="row">
-      <span 
-        class ="col" 
-        :class ="{
-          'blue': it && it[2] === 'B',
-          'red': it && it[2] === 'A',
-          'active': chooseItem && chooseItem === it,
-        }"
+      class ="row-x">
+      <div 
+        class ="col-x"
+        
+        @click = 'pick(it, index, i)'
         v-for = "(it, i) in item" 
-        @click = 'pick(it, index, i)'>
-        {{it?chess.get(it).name: '' }}
-      </span>  
+        >
+        <div
+          class= "chess"
+          v-if ="it"
+          :class = "{
+            'blue': it[2] === 'B',
+            'red': it[2] === 'A',
+            'active': chooseItem && chooseItem === it
+          }"
+          >
+          {{it?chess.get(it).name: '' }}
+        </div>
+      </div>  
     </div>
-  </div>
+  </chess-main>
 </div>
 </template>
 <script>
+  import chessMain from './__child/main'
   import dashboard from './__child/dashboard'
   import curryPick from './utils/curryPick'
   import Chess from './class/Chess'
@@ -32,7 +40,7 @@
   // import Check from './class/Check'
   export default {
     components: {
-      dashboard
+      dashboard, chessMain
     },
     data () {
       return {
@@ -131,140 +139,86 @@
     height:1200px;
     background-image:url(../assets/bg.png);
   }
-  .board{
-    font-family:KaiTi;
-    width: 900px;
-    position:relative;
-    box-shadow:
-    0px 0px 0px 40px #FDF5E6 inset,
-    0px 0px 0px 45px #fff inset,
-    0px 0px 0px 48px #FDF5E6 inset,
-    0px 0px 0px 50px #fff inset,
-    0px 0px 0px 50px #FDF5E6 inset,
-    0px 0px 0px 20px #FDF5E6,
-    0px 1px 0px 20px #fff,
-    0px 6px 3px 17px darken(#FDF5E6, 20%),
-    0px 6px 0px 20px darken(#FDF5E6, 10%),
-    0px 5px 3px 22px #cbcbcb;
-    margin:0 auto;
-    border-radius:5px;
-      overflow: hidden;
-      background: #FDF5E6;
-      background-image: 
-        linear-gradient(
-          transparent, 
-          transparent 49px,
-          #fff 49px,
-          #fff 51px,
-          transparent 51px
-        ), linear-gradient(90deg,
-          transparent, 
-          transparent 49px,
-          #fff 49px,
-          #fff 51px,
-          transparent 51px
-        );
-      background-size: 100px 100px, 100px 100px;
-  }
-  .board:after{
-      color:#fff;
-      font-weight: bold;
-      font-size: 60px;
-      position: absolute;
-      left: 400px;
-      top: 102px;
-      font-weight:bold;
-      width: 98px;
-      content: '楚河漢界';
-      line-height:200px;
-      text-align: center;
-      background: #FDF5E6;
-      z-index:0;
-      height:795px;
-      transform: rotate(-90deg)
-    }
-  .row{
-    position:relative;
-    z-index:1;
-    width:900px;
+  .row-x {
     height:100px;
-    font-size:0;
+    width:1200px;
   }
-  .col{
-      transition:all .2s;
-      width:100px;
-      font-size:40px;
-      font-family:KaiTi;
-      text-shadow:0px -1px 0px #666;
-      overflow:hidden;
-      height:100px;
-      line-height:100px;
-      display:inline-block;
-      border-radius:50%;  
+  .col-x{
+    position:relative;
+    width:100px;
+    float:left;
+    height:100px;
+  }
+  .chess{
+
+    font-size:40px;
+    font-family:KaiTi;
+    position:absolute;
+    text-shadow:0px -.5px .5px #666;
+    border-radius:50%;
+    &.red{
+      width:80px;
+      background :#FDF5E6;
+      margin: 10px;
+      height:80px;
+      line-height:75px;
+      box-shadow: 
+        0 -3px 1px #C59F75 inset,
+        0px -5px 5px #DEB887 inset,
+        0 -3px 0 6px #FDF5E6 inset,
+        0 -2px 0px 6px #FFDAB9 inset,
+        0 -3px 0 10px #FDF1d1 inset,
+        0 -4px 0px 10px #FFDAB9 inset,
+        0px 1px 5px #666,
+        0px 3px 6px #cbcbcb,
+        0px 6px 5px #f1f1f1;
+      color:#FF4500;
+      &.active{
+        box-shadow: 
+          0 -3px 1px #C59F75 inset,
+          0px -5px 5px #DEB887 inset,
+          0 -3px 0 6px #FDF5E6 inset,
+          0 -2px 2px 6px #FFDAB9 inset,
+          0 -3px 0 10px #FDF1d1 inset,
+          0 -4px 2px 10px #FFDAB9 inset,
+          0px 5px 10px #777,
+          0px 10px 20px #cbcbcb;
+      }
+      &:after {
+        content: '';
+        color: red;
+      }
     }
-  .col.red{
-    width:80px;
-    background :#FDF5E6;
-    margin: 10px;
-    height:80px;
-    line-height:75px;
-    box-shadow: 
-      0 -3px 1px #C59F75 inset,
-      0px -5px 5px #DEB887 inset,
-      0 -3px 0 6px #FDF5E6 inset,
-      0 -2px 0px 6px #FFDAB9 inset,
-      0 -3px 0 10px #FDF1d1 inset,
-      0 -4px 0px 10px #FFDAB9 inset,
-      0px 1px 5px #666,
-      0px 3px 6px #cbcbcb,
-      0px 6px 5px #f1f1f1;
-    color:#FF4500;
-    
-  }
-  .col.red.active{
-    box-shadow: 
-      0 -3px 1px #C59F75 inset,
-      0px -5px 5px #DEB887 inset,
-      0 -3px 0 6px #FDF5E6 inset,
-      0 -2px 2px 6px #FFDAB9 inset,
-      0 -3px 0 10px #FDF1d1 inset,
-      0 -4px 2px 10px #FFDAB9 inset,
-      0px 5px 10px #777,
-      0px 10px 20px #cbcbcb;
-  }
-  .col.red:after {
-    content: '';
-    color: red;
-  }
-  .col.blue{
-    width:80px;
-    background :#FDF5E6;
-    margin: 10px;
-    height:80px;
-    line-height:75px;
-    box-shadow: 
-      0 -3px 1px #C59F75 inset,
-      0px -5px 5px #DEB887 inset,
-      0 -3px 0 6px #FDF5E6 inset,
-      0 -2px 1px 6px #FFDAB9 inset,
-      0 -3px 0 10px #FDF1d1 inset,
-      0 -4px 1px 10px #FFDAB9 inset,
-      0px 1px 5px #666,
-      0px 3px 6px #cbcbcb,
-      0px 6px 5px #f1f1f1;
-    color:#1E90FF;
-  }
-  .col.blue.active{
-    box-shadow: 
-      0 -3px 1px #C59F75 inset,
-      0px -5px 5px #DEB887 inset,
-      0 -3px 0 6px #FDF5E6 inset,
-      0 -3px 0 10px #FDF1d1 inset,
-      0px 10px 5px #666,
-      0px 10px 10px #cbcbcb;
-  }
-  .col.blue:after {
-    content: '';
-    color: blue;
+    &.blue{
+      width:80px;
+      background :#FDF5E6;
+      margin: 10px;
+      height:80px;
+      line-height:75px;
+      box-shadow: 
+        0 -3px 1px #C59F75 inset,
+        0px -5px 5px #DEB887 inset,
+        0 -3px 0 6px #FDF5E6 inset,
+        0 -2px 1px 6px #FFDAB9 inset,
+        0 -3px 0 10px #FDF1d1 inset,
+        0 -4px 1px 10px #FFDAB9 inset,
+        0px 1px 5px #666,
+        0px 3px 6px #cbcbcb,
+        0px 6px 5px #f1f1f1;
+      color:#1E90FF;
+      &.active{
+        box-shadow: 
+          0 -3px 1px #C59F75 inset,
+          0px -5px 5px #DEB887 inset,
+          0 -3px 0 6px #FDF5E6 inset,
+          0 -3px 0 10px #FDF1d1 inset,
+          0px 10px 5px #666,
+          0px 10px 10px #cbcbcb;
+      }
+      &:after {
+        content: '';
+        color: blue;
+      }
+    }
   }
 </style>
