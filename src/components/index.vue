@@ -1,21 +1,39 @@
 <template>
-<div>
+<div 
+  :style = '{
+    transition: ".5s all",
+    transformOrigin: "50% 0",
+    transform: `scale(${this.scale})`
+  }'
+>
   <dashboard 
     :camp = "choose"
     @on-reset = "reset"
     @on-undo = "undo"
+    @on-rotate = "rotate"
+    @on-zoom-in = "zoom('in')"
+    @on-zoom-out = "zoom('out')"
     ></dashboard>
-  <chess-main>
+  <chess-main
+    :style = '{
+      
+      transition: ".5s all",
+      transform: `rotate(${this.deg}deg)`
+    }'
+  >
     <div 
+      style = "-webkit-perspective:1000"
       v-for = "(item, index) in mtx" 
       class ="row-x">
       <div 
         class ="col-x"
-        
         @click = 'pick(it, index, i)'
         v-for = "(it, i) in item" 
         >
         <div
+          :style = '{
+            transform: "rotate(" + -deg + "deg)"
+          }'
           class= "chess"
           v-if ="it"
           :class = "{
@@ -34,7 +52,7 @@
 <script>
   import chessMain from './__child/main'
   import dashboard from './__child/dashboard'
-  import curryPick from './utils/curryPick'
+  // import curryPick from './utils/curryPick'
   import Chess from './class/Chess'
   import Rule from './class/Rule'
   // import Check from './class/Check'
@@ -46,45 +64,58 @@
       return {
         chess: {},
         mtx: [],
-        choose: 'A',
-        chooseItem: null
+        choose: 'B',
+        chooseItem: null,
+        history: [],
+        deg: 0,
+        scale: 1
       }
     },
     mounted () {
       this.reset()
     },
     methods: {
+      zoom (str) {
+        if (str === 'in') {
+          this.scale < 2 ? this.scale += 0.1 : ''
+        } else {
+          this.scale > 0.5 ? this.scale -= 0.1 : ''
+        }
+      },
+      rotate () {
+        this.deg += 90
+        console.log('rotate')
+      },
       undo () {
-        console.log('undo')
+        if (this.history.length > 1) {
+          this.history.shift()
+          this.chess = new Map(JSON.parse(this.history[0]))
+          this.renderIt(this.history[0])
+        }
+      },
+      submit () {
+        this.history.unshift(JSON.stringify([...this.chess]))
+        this.renderIt(this.history[0])
       },
       reset () {
-        console.log('reset')
-        this.choose = 'A'
+        this.choose = 'B'
         this.chooseItem = null
-        this.chess = new Map(new Chess().map((item) => item))
-        this.renderIt()
+        this.chess = new Map(new Chess())
+        this.history = []
+        this.submit()
       },
-      renderIt () {
-        console.log(this.chess)
-        this.mtx = Array(10).fill().map((item, i) => Array(9).fill(null))
-        for (let [key, value] of this.chess) {
+      renderIt (obj) {
+        let now = Array(10).fill().map((item, i) => Array(9).fill(null))
+        for (let [key, value] of new Map(JSON.parse(obj))) {
           if (value.x !== null) {
-            this.mtx[value.y][value.x] = key
+            now[value.y][value.x] = key
           }
         }
-        console.log(this.mtx)
-        // this.choose === 'A' ? this.choose = 'B' : this.choose = 'A'
-        // this.chooseItem = null
-      },
-      pck (...arg) {
-        curryPick((...arg) => {
-          return [...arg]
-        })
+        this.mtx = now.map((item) => item)
+        this.choose === 'A' ? this.choose = 'B' : this.choose = 'A'
+        this.chooseItem = null
       },
       pick (it, y, x) {
-        console.log(this.pck(it))
-        // console.log(Check(it))
-        // console.log(it)
         if (this.chooseItem) {
           if (it) {
             if (it === this.chooseItem) {
@@ -115,6 +146,7 @@
         new Rule(this.mtx).from(one).to(two) && this.jump(one, two)
       },
       jump (one, two) {
+        console.log('jump')
         let ax = one.x
         let ay = one.y
         let bx = two.x
@@ -125,11 +157,7 @@
           this.chess.get(this.mtx[by][bx]).x = null
           this.chess.get(this.mtx[by][bx]).y = null
         }
-        // console.log(this.mtx[one.y][one.x])
-        this.renderIt()
-        this.choose === 'A' ? this.choose = 'B' : this.choose = 'A'
-        this.chooseItem = null
-        console.log(this.chess)
+        this.submit()
       }
     }
   }
@@ -138,42 +166,43 @@
   html{
     height:1200px;
     background-image:url(../assets/bg.png);
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
   .row-x {
     height:100px;
     width:1200px;
   }
   .col-x{
+    cursor:pointer;
     position:relative;
     width:100px;
     float:left;
     height:100px;
   }
   .chess{
-
+    cursor:pointer;
+    transition:.3s all;
     font-size:40px;
     font-family:KaiTi;
+    font-weight:bold;
     position:absolute;
     text-shadow:0px -.5px .5px #666;
     border-radius:50%;
-    &.red{
-      width:80px;
-      background :#FDF5E6;
-      margin: 10px;
-      height:80px;
-      line-height:75px;
-      box-shadow: 
-        0 -3px 1px #C59F75 inset,
-        0px -5px 5px #DEB887 inset,
-        0 -3px 0 6px #FDF5E6 inset,
-        0 -2px 0px 6px #FFDAB9 inset,
-        0 -3px 0 10px #FDF1d1 inset,
-        0 -4px 0px 10px #FFDAB9 inset,
-        0px 1px 5px #666,
-        0px 3px 6px #cbcbcb,
-        0px 6px 5px #f1f1f1;
-      color:#FF4500;
+    box-shadow: 
+      0 -3px 1px #C59F75 inset,
+      0px -5px 5px #DEB887 inset,
+      0 -3px 0 6px #FDF5E6 inset,
+      0 -2px 0px 6px #FFDAB9 inset,
+      0 -3px 0 10px #FDF1d1 inset,
+      0 -4px 0px 10px #FFDAB9 inset,
+      0px 1px 5px #666,
+      0px 3px 6px #cbcbcb,
+      0px 6px 5px #f1f1f1;
       &.active{
+        transform: translateZ(20px);
         box-shadow: 
           0 -3px 1px #C59F75 inset,
           0px -5px 5px #DEB887 inset,
@@ -184,6 +213,13 @@
           0px 5px 10px #777,
           0px 10px 20px #cbcbcb;
       }
+    &.red{
+      width:80px;
+      background :#FDF5E6;
+      margin: 10px;
+      height:80px;
+      line-height:75px;
+      color:#FF4500;
       &:after {
         content: '';
         color: red;
@@ -195,26 +231,7 @@
       margin: 10px;
       height:80px;
       line-height:75px;
-      box-shadow: 
-        0 -3px 1px #C59F75 inset,
-        0px -5px 5px #DEB887 inset,
-        0 -3px 0 6px #FDF5E6 inset,
-        0 -2px 1px 6px #FFDAB9 inset,
-        0 -3px 0 10px #FDF1d1 inset,
-        0 -4px 1px 10px #FFDAB9 inset,
-        0px 1px 5px #666,
-        0px 3px 6px #cbcbcb,
-        0px 6px 5px #f1f1f1;
       color:#1E90FF;
-      &.active{
-        box-shadow: 
-          0 -3px 1px #C59F75 inset,
-          0px -5px 5px #DEB887 inset,
-          0 -3px 0 6px #FDF5E6 inset,
-          0 -3px 0 10px #FDF1d1 inset,
-          0px 10px 5px #666,
-          0px 10px 10px #cbcbcb;
-      }
       &:after {
         content: '';
         color: blue;

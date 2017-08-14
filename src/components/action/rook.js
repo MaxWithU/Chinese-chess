@@ -1,5 +1,6 @@
 import range from '../utils/range'
 export default function (mtx, item) {
+  console.log(mtx)
   function rdx (a, b) {
     return a.reduce((x, y, i) => {
       if (i < b) {
@@ -18,7 +19,8 @@ export default function (mtx, item) {
   // x轴
   let x = rdx(mtx[item.y], item.x)
   // y轴
-  let y = rdx(mtx.map((it, i) => it[item.x] && it[item.x]), item.y)
+  let y = rdx(mtx.map((it, i) => it[item.x]), item.y)
+  console.log(y)
   let result = new Set([
     ...range(x[0], x[1]).map((it) => `${it}_${item.y}`),
     ...range(y[0], y[1]).map((it) => `${item.x}_${it}`)

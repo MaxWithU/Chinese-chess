@@ -12,8 +12,8 @@ export default function (mtx, item) {
     let max = () => arr.indexOf(item[type]) < arr.length - 1 ? arr[arr.indexOf(item[type]) + 1] - 1 : num - 1
     let min = () => arr.indexOf(item[type]) > 0 ? arr[arr.indexOf(item[type]) - 1] + 1 : 0
     let result = range(min(), max())
-    arr[arr.indexOf(item[type]) + 2] && result.push(arr[arr.indexOf(item[type]) + 2])
-    arr[arr.indexOf(item[type]) - 2] && result.push(arr[arr.indexOf(item[type]) - 2])
+    arr[arr.indexOf(item[type]) + 2] > -1 && result.push(arr[arr.indexOf(item[type]) + 2])
+    arr[arr.indexOf(item[type]) - 2] > -1 && result.push(arr[arr.indexOf(item[type]) - 2])
     return result
   }
   let result = new Set([
@@ -21,5 +21,6 @@ export default function (mtx, item) {
     ...Area(x, mtx.length, 'y').map((it) => `${item.x}_${it}`)
   ])
   result.delete(`${item.x}_${item.y}`)
+  console.log(result)
   return result
 }

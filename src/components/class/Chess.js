@@ -8,10 +8,10 @@ export default class {
         'x': 8, 'y': 0, 'type': 'R', 'name': '車', 'camp': 'A'
       }],
       ['H_A_1', {
-        'x': 1, 'y': 0, 'type': 'H', 'name': '马', 'camp': 'A'
+        'x': 1, 'y': 0, 'type': 'H', 'name': '馬', 'camp': 'A'
       }],
       ['H_A_2', {
-        'x': 7, 'y': 0, 'type': 'H', 'name': '马', 'camp': 'A'
+        'x': 7, 'y': 0, 'type': 'H', 'name': '馬', 'camp': 'A'
       }],
       ['E_A_1', {
         'x': 2, 'y': 0, 'type': 'E', 'name': '相', 'camp': 'A'
@@ -20,10 +20,10 @@ export default class {
         'x': 6, 'y': 0, 'type': 'E', 'name': '相', 'camp': 'A'
       }],
       ['M_A_1', {
-        'x': 3, 'y': 0, 'type': 'M', 'name': '士', 'camp': 'A'
+        'x': 3, 'y': 0, 'type': 'M', 'name': '仕', 'camp': 'A'
       }],
       ['M_A_2', {
-        'x': 5, 'y': 0, 'type': 'M', 'name': '士', 'camp': 'A'
+        'x': 5, 'y': 0, 'type': 'M', 'name': '仕', 'camp': 'A'
       }],
       ['C_A_1', {
         'x': 1, 'y': 2, 'type': 'C', 'name': '炮', 'camp': 'A'
@@ -56,16 +56,16 @@ export default class {
         'x': 8, 'y': 9, 'type': 'R', 'name': '車', 'camp': 'B'
       }],
       ['H_B_1', {
-        'x': 1, 'y': 9, 'type': 'H', 'name': '马', 'camp': 'B'
+        'x': 1, 'y': 9, 'type': 'H', 'name': '馬', 'camp': 'B'
       }],
       ['H_B_2', {
-        'x': 7, 'y': 9, 'type': 'H', 'name': '马', 'camp': 'B'
+        'x': 7, 'y': 9, 'type': 'H', 'name': '馬', 'camp': 'B'
       }],
       ['E_B_1', {
-        'x': 2, 'y': 9, 'type': 'E', 'name': '相', 'camp': 'B'
+        'x': 2, 'y': 9, 'type': 'E', 'name': '象', 'camp': 'B'
       }],
       ['E_B_2', {
-        'x': 6, 'y': 9, 'type': 'E', 'name': '相', 'camp': 'B'
+        'x': 6, 'y': 9, 'type': 'E', 'name': '象', 'camp': 'B'
       }],
       ['M_B_1', {
         'x': 3, 'y': 9, 'type': 'M', 'name': '士', 'camp': 'B'
@@ -80,19 +80,19 @@ export default class {
         'x': 7, 'y': 7, 'type': 'C', 'name': '炮', 'camp': 'B'
       }],
       ['S_B_1', {
-        'x': 0, 'y': 6, 'type': 'S', 'name': '兵', 'camp': 'B'
+        'x': 0, 'y': 6, 'type': 'S', 'name': '卒', 'camp': 'B'
       }],
       ['S_B_2', {
-        'x': 2, 'y': 6, 'type': 'S', 'name': '兵', 'camp': 'B'
+        'x': 2, 'y': 6, 'type': 'S', 'name': '卒', 'camp': 'B'
       }],
       ['S_B_3', {
-        'x': 4, 'y': 6, 'type': 'S', 'name': '兵', 'camp': 'B'
+        'x': 4, 'y': 6, 'type': 'S', 'name': '卒', 'camp': 'B'
       }],
       ['S_B_4', {
-        'x': 6, 'y': 6, 'type': 'S', 'name': '兵', 'camp': 'B'
+        'x': 6, 'y': 6, 'type': 'S', 'name': '卒', 'camp': 'B'
       }],
       ['S_B_5', {
-        'x': 8, 'y': 6, 'type': 'S', 'name': '兵', 'camp': 'B'
+        'x': 8, 'y': 6, 'type': 'S', 'name': '卒', 'camp': 'B'
       }],
       ['G_B_1', {
         'x': 4, 'y': 9, 'type': 'G', 'name': '将', 'camp': 'B'

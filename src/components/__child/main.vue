@@ -10,7 +10,9 @@
         }"
         v-for = "ii in 9" 
         >
-        <div :class="{
+        <div 
+        v-if = "home(i, ii)"
+        :class="{
           home: home(i, ii)
         }"></div>
         </div>
@@ -23,32 +25,10 @@
 </template>
 <script>
   const LEFTLIST = [
-    [3, 2],
-    [3, 8],
-    [8, 2],
-    [8, 8],
-    [4, 9],
-    [4, 3],
-    [4, 5],
-    [4, 7],
-    [7, 9],
-    [7, 3],
-    [7, 5],
-    [7, 7]
+    [3, 2], [3, 8], [8, 2], [8, 8], [4, 9], [4, 3], [4, 5], [4, 7], [7, 9], [7, 3], [7, 5], [7, 7]
   ]
   const RIGHTLIST = [
-    [3, 2],
-    [3, 8],
-    [8, 2],
-    [8, 8],
-    [4, 1],
-    [4, 3],
-    [4, 5],
-    [4, 7],
-    [7, 1],
-    [7, 3],
-    [7, 5],
-    [7, 7]
+    [3, 2], [3, 8], [8, 2], [8, 8], [4, 1], [4, 3], [4, 5], [4, 7], [7, 1], [7, 3], [7, 5], [7, 7]
   ]
   export default {
     data () {
@@ -75,6 +55,17 @@
 </script>
 <style lang="less">
 .main{
+  &:before {
+    content: '';
+    top:50px;
+    left:50px;
+    right:50px;
+    bottom:50px;
+    z-index:100;
+    position:absolute;
+    display:block;
+    background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACdJREFUeNpiYEAFvP///2cAYQxBJBoiCCKQVPPCCWQJgjqw2gEQYACWECdcSWpl9AAAAABJRU5ErkJggg==);
+  }
   width: 900px;
   position:relative;
   box-shadow:
@@ -91,7 +82,7 @@
   margin:0 auto;
   border-radius:5px;
   overflow: hidden;
-  background: #FDF5E6;
+  background-color: #FAEBD7;
   background-image: 
     linear-gradient(
       transparent, 
@@ -120,7 +111,7 @@
     content: '楚河漢界';
     line-height:200px;
     text-align: center;
-    background: #FDF5E6;
+    background: #FAEBD7;
     z-index:0;
     height:795px;
     transform: rotate(-90deg)
@@ -181,12 +172,12 @@
       transparent 16px,
       #fff 16px,
       #fff 18px,
-      #FDF5E6 18px,
-      #FDF5E6 24px,
+      #FAEBD7 18px,
+      #FAEBD7 24px,
       transparent 24px,
       transparent 26px,
-      #FDF5E6 26px,
-      #FDF5E6 32px,
+      #FAEBD7 26px,
+      #FAEBD7 32px,
       #fff 32px,
       #fff 34px,
       transparent 34px,
@@ -217,12 +208,12 @@
       transparent 16px,
       #fff 16px,
       #fff 18px,
-      #FDF5E6 18px,
-      #FDF5E6 24px,
+      #FAEBD7 18px,
+      #FAEBD7 24px,
       transparent 24px,
       transparent 26px,
-      #FDF5E6 26px,
-      #FDF5E6 32px,
+      #FAEBD7 26px,
+      #FAEBD7 32px,
       #fff 32px,
       #fff 34px,
       transparent 34px,
